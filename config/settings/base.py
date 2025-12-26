@@ -49,7 +49,6 @@ INSTALLED_APPS = [
 PROJECT_APPS = [
     "core",
     "user",
-    "booking",
 ]
 
 INSTALLED_APPS += PROJECT_APPS
