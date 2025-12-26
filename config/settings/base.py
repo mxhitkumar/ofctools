@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 PROJECT_APPS = [
     "core",
     "user",
+    "script",
 ]
 
 INSTALLED_APPS += PROJECT_APPS
