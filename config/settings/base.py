@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 PROJECT_APPS = [
+    "resumes",
     "core",
     "user",
     "script",
