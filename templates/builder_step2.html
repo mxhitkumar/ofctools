@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Work Experience - Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Progress Indicator -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">Resume Builder Progress</h6>
+                        <span class="badge bg-primary">Step 2 of 5</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-success"><i class="bi bi-check-circle-fill"></i> Basic Info</small>
+                        <small class="text-primary fw-bold">2. Experience</small>
+                        <small class="text-muted">3. Education</small>
+                        <small class="text-muted">4. Skills</small>
+                        <small class="text-muted">5. Template</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Form -->
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-briefcase"></i> Step 2: Work Experience
+                    </h4>
+                    <p class="mb-0 mt-2 text-white-50">Add your professional work history</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" id="experienceForm">
+                        {% csrf_token %}
+                        {{ formset.management_form }}
+                        
+                        <div id="formset-container">
+                            {% for form in formset %}
+                            <div class="formset-row card mb-4" style="border-left: 4px solid var(--primary-color);">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">
+                                            <i class="bi bi-building"></i> Experience #{{ forloop.counter }}
+                                        </h5>
+                                        {% if not forloop.first %}
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-form-row">
+                                            <i class="bi bi-trash"></i> Remove
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {{ form.id }}
+                                    {{ form.resume }}
+                                    {{ form.order }}
+                                    {{ form.DELETE }}
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">
+                                                Company Name <span class="text-danger">*</span>
+                                            </label>
+                                            {{ form.company }}
+                                            {% if form.company.errors %}
+                                                <div class="text-danger mt-1">{{ form.company.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">
+                                                Job Title <span class="text-danger">*</span>
+                                            </label>
+                                            {{ form.position }}
+                                            {% if form.position.errors %}
+                                                <div class="text-danger mt-1">{{ form.position.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Location</label>
+                                            {{ form.location }}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                                            {{ form.start_date }}
+                                            {% if form.start_date.errors %}
+                                                <div class="text-danger mt-1">{{ form.start_date.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">End Date</label>
+                                            {{ form.end_date }}
+                                            <div class="form-check mt-2">
+                                                {{ form.is_current }}
+                                                <label class="form-check-label" for="{{ form.is_current.id_for_label }}">
+                                                    Currently working here
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Job Responsibilities & Achievements <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.description }}
+                                        <small class="form-text text-muted d-block mt-1">
+                                            <i class="bi bi-lightbulb text-warning"></i> 
+                                            Use bullet points and start with action verbs. Include quantifiable achievements!
+                                        </small>
+                                        {% if form.description.errors %}
+                                            <div class="text-danger mt-1">{{ form.description.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Add More Button -->
+                        <div class="text-center mb-4">
+                            <button type="button" class="btn btn-outline-primary add-form-row">
+                                <i class="bi bi-plus-circle"></i> Add Another Experience
+                            </button>
+                        </div>
+                        
+                        <!-- Example Card -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6><i class="bi bi-info-circle text-info"></i> Example Description:</h6>
+                                <pre class="mb-0 small">• Developed and maintained web applications using Django and React, serving 10,000+ daily users
+• Led team of 5 developers in Agile environment, improving sprint velocity by 30%
+• Reduced application load time by 45% through database optimization and caching strategies
+• Collaborated with cross-functional teams to deliver features on time and within budget</pre>
+                            </div>
+                        </div>
+                        
+                        <!-- Navigation -->
+                        <div class="d-flex justify-content-between pt-3 border-top">
+                            <a href="{% url 'resumes:resume_builder_step1' resume.pk %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Previous
+                            </a>
+                            <div>
+                                <button type="button" class="btn btn-outline-primary me-2" onclick="skipStep()">
+                                    Skip for Now
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    Next: Education <i class="bi bi-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tips Card -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6><i class="bi bi-star text-warning"></i> Pro Tips for Work Experience</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="small mb-0">
+                                <li>Start with action verbs (Developed, Led, Managed, Created)</li>
+                                <li>Include specific numbers and metrics</li>
+                                <li>Focus on achievements, not just responsibilities</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="small mb-0">
+                                <li>Use keywords from your target job description</li>
+                                <li>List experiences in reverse chronological order</li>
+                                <li>Keep each bullet point to 1-2 lines</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Formset management
+    const formsetContainer = document.getElementById('formset-container');
+    const totalFormsInput = document.querySelector('[name$="-TOTAL_FORMS"]');
+    let formCount = parseInt(totalFormsInput.value);
+    
+    // Add new form
+    document.querySelector('.add-form-row').addEventListener('click', function() {
+        const lastForm = formsetContainer.querySelector('.formset-row:last-child');
+        const newForm = lastForm.cloneNode(true);
+        
+        // Update form number in header
+        const header = newForm.querySelector('h5');
+        header.innerHTML = `<i class="bi bi-building"></i> Experience #${formCount + 1}`;
+        
+        // Show delete button
+        let deleteBtn = newForm.querySelector('.delete-form-row');
+        if (!deleteBtn) {
+            deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'btn btn-sm btn-outline-danger delete-form-row';
+            deleteBtn.innerHTML = '<i class="bi bi-trash"></i> Remove';
+            newForm.querySelector('.d-flex').appendChild(deleteBtn);
+        }
+        deleteBtn.style.display = 'block';
+        
+        // Update all field names and IDs
+        newForm.innerHTML = newForm.innerHTML.replace(
+            new RegExp(`experiences-${formCount - 1}-`, 'g'),
+            `experiences-${formCount}-`
+        );
+        
+        // Clear all input values
+        newForm.querySelectorAll('input:not([type="hidden"]), textarea').forEach(input => {
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else if (input.type !== 'hidden') {
+                input.value = '';
+            }
+        });
+        
+        // Clear hidden DELETE field
+        const deleteField = newForm.querySelector('[name$="-DELETE"]');
+        if (deleteField) deleteField.checked = false;
+        
+        formsetContainer.appendChild(newForm);
+        formCount++;
+        totalFormsInput.value = formCount;
+        
+        // Scroll to new form
+        newForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    
+    // Delete form (soft delete)
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-form-row') || 
+            e.target.closest('.delete-form-row')) {
+            
+            const button = e.target.closest('.delete-form-row');
+            const formRow = button.closest('.formset-row');
+            
+            if (confirm('Are you sure you want to remove this experience?')) {
+                const deleteInput = formRow.querySelector('[name$="-DELETE"]');
+                if (deleteInput) {
+                    deleteInput.checked = true;
+                }
+                formRow.style.display = 'none';
+            }
+        }
+    });
+    
+    // Toggle end date based on current position checkbox
+    document.addEventListener('change', function(e) {
+        if (e.target.name && e.target.name.includes('-is_current')) {
+            const formRow = e.target.closest('.formset-row');
+            const endDateInput = formRow.querySelector('[name$="-end_date"]');
+            
+            if (e.target.checked) {
+                endDateInput.value = '';
+                endDateInput.disabled = true;
+                endDateInput.style.opacity = '0.5';
+            } else {
+                endDateInput.disabled = false;
+                endDateInput.style.opacity = '1';
+            }
+        }
+    });
+    
+    // Initialize current position checkboxes
+    document.querySelectorAll('[name$="-is_current"]').forEach(checkbox => {
+        if (checkbox.checked) {
+            const formRow = checkbox.closest('.formset-row');
+            const endDateInput = formRow.querySelector('[name$="-end_date"]');
+            endDateInput.disabled = true;
+            endDateInput.style.opacity = '0.5';
+        }
+    });
+    
+    // Skip step function
+    function skipStep() {
+        if (confirm('Are you sure you want to skip adding work experience? This is an important section for most resumes.')) {
+            window.location.href = "{% url 'resumes:resume_builder_step3' resume.pk %}";
+        }
+    }
+    
+    // Form validation
+    document.getElementById('experienceForm').addEventListener('submit', function(e) {
+        let hasAtLeastOne = false;
+        
+        document.querySelectorAll('.formset-row').forEach(row => {
+            const deleteInput = row.querySelector('[name$="-DELETE"]');
+            if (row.style.display !== 'none' && (!deleteInput || !deleteInput.checked)) {
+                const company = row.querySelector('[name$="-company"]').value;
+                const position = row.querySelector('[name$="-position"]').value;
+                
+                if (company && position) {
+                    hasAtLeastOne = true;
+                }
+            }
+        });
+        
+        if (!hasAtLeastOne) {
+            e.preventDefault();
+            if (!confirm('You haven\'t added any work experience. Do you want to continue without it?')) {
+                return false;
+            }
+        }
+        
+        showLoading();
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .formset-row {
+        transition: all 0.3s ease;
+    }
+    
+    .formset-row:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    pre {
+        background: white;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid var(--info);
+    }
+</style>
+{% endblock %}

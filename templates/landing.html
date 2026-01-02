@@ -1,0 +1,509 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Professional Resume Builder - Create ATS-Optimized Resumes{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 100px 0;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h1 class="display-3 fw-bold mb-4">Build Your Perfect Resume in Minutes</h1>
+                <p class="lead mb-4">Create professional, ATS-optimized resumes that get you noticed. Choose from multiple templates, optimize for job descriptions, and export as high-quality PDFs.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'resumes:resume_builder_step1_new' %}" class="btn btn-light btn-lg px-4">
+                        <i class="bi bi-rocket-takeoff"></i> Get Started Free
+                    </a>
+                    <a href="#features" class="btn btn-outline-light btn-lg px-4">
+                        Learn More <i class="bi bi-arrow-down"></i>
+                    </a>
+                </div>
+                <div class="mt-4">
+                    <small class="opacity-75">
+                        <i class="bi bi-check-circle-fill"></i> No credit card required
+                        <span class="mx-2">•</span>
+                        <i class="bi bi-check-circle-fill"></i> Free forever
+                    </small>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <img src="https://via.placeholder.com/600x400/667eea/ffffff?text=Resume+Preview" 
+                         alt="Resume Builder Preview" 
+                         class="img-fluid rounded shadow-lg"
+                         style="transform: perspective(1000px) rotateY(-5deg);">
+                    <div class="position-absolute top-0 start-0 bg-success text-white px-3 py-2 rounded" style="margin: 20px;">
+                        <i class="bi bi-star-fill"></i> ATS Score: 95/100
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4 mb-md-0">
+                <div class="display-4 fw-bold text-primary">10K+</div>
+                <p class="text-muted mb-0">Resumes Created</p>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <div class="display-4 fw-bold text-primary">95%</div>
+                <p class="text-muted mb-0">ATS Pass Rate</p>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <div class="display-4 fw-bold text-primary">5</div>
+                <p class="text-muted mb-0">Professional Templates</p>
+            </div>
+            <div class="col-md-3">
+                <div class="display-4 fw-bold text-primary">24/7</div>
+                <p class="text-muted mb-0">Access Anytime</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Everything You Need to Land Your Dream Job</h2>
+            <p class="lead text-muted">Powerful features designed to make resume building effortless</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-lightning-charge fs-3"></i>
+                        </div>
+                        <h4 class="mb-3">Quick & Easy Builder</h4>
+                        <p class="text-muted">Create your resume in just 5 simple steps. Our intuitive interface guides you through every section.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-success bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-robot fs-3"></i>
+                        </div>
+                        <h4 class="mb-3">ATS Optimization</h4>
+                        <p class="text-muted">Get real-time feedback on your resume's ATS compatibility. Score 80+ and beat the bots!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-info bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-palette fs-3"></i>
+                        </div>
+                        <h4 class="mb-3">Professional Templates</h4>
+                        <p class="text-muted">Choose from 5 beautifully designed templates. Switch between them instantly to find your perfect style.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-warning bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-file-pdf fs-3"></i>
+                        </div>
+                        <h4 class="mb-3">PDF Export</h4>
+                        <p class="text-muted">Download your resume as a high-quality PDF. Perfect for email attachments and online applications.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-danger bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-layers fs-3"></i>
+                        </div>
+                        <h4 class="mb-3">Multiple Resumes</h4>
+                        <p class="text-muted">Create and manage unlimited resumes. Tailor each one for different job applications.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-secondary bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-shield-check fs-3"></i>
+                        </div>
+                        <h4 class="mb-3">Secure & Private</h4>
+                        <p class="text-muted">Your data is encrypted and secure. We never share your information with third parties.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">How It Works</h2>
+            <p class="lead text-muted">Create your perfect resume in 3 simple steps</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                <div class="position-relative mb-4">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="display-4 fw-bold">1</span>
+                    </div>
+                </div>
+                <h4 class="mb-3">Enter Your Information</h4>
+                <p class="text-muted">Fill in your details through our easy-to-use 5-step form. Add your experience, education, and skills.</p>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="position-relative mb-4">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="display-4 fw-bold">2</span>
+                    </div>
+                </div>
+                <h4 class="mb-3">Choose a Template</h4>
+                <p class="text-muted">Select from our professionally designed templates. Preview and switch between styles instantly.</p>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="position-relative mb-4">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="display-4 fw-bold">3</span>
+                    </div>
+                </div>
+                <h4 class="mb-3">Download & Apply</h4>
+                <p class="text-muted">Export your resume as a PDF and start applying. Use our ATS optimizer to improve your chances.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Templates Showcase -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Beautiful Templates for Every Industry</h2>
+            <p class="lead text-muted">All templates are ATS-friendly and fully customizable</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm template-card">
+                    <img src="https://via.placeholder.com/400x500/3498db/ffffff?text=Professional" class="card-img-top" alt="Professional Template">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Professional</h5>
+                        <p class="card-text text-muted">Perfect for corporate and traditional industries</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm template-card">
+                    <img src="https://via.placeholder.com/400x500/e74c3c/ffffff?text=Creative" class="card-img-top" alt="Creative Template">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Creative</h5>
+                        <p class="card-text text-muted">Stand out in design and creative fields</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm template-card">
+                    <img src="https://via.placeholder.com/400x500/2ecc71/ffffff?text=Modern" class="card-img-top" alt="Modern Template">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Modern</h5>
+                        <p class="card-text text-muted">Clean and contemporary for tech roles</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">What Our Users Say</h2>
+            <p class="lead text-muted">Join thousands of satisfied job seekers</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-3">"The ATS optimizer helped me land 3 interviews in my first week! My previous resume was getting zero responses."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <span class="fw-bold">SK</span>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Sarah Kim</h6>
+                                <small class="text-muted">Software Engineer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-3">"Super easy to use and the templates look so professional. I got compliments from recruiters on my resume!"</p>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <span class="fw-bold">MJ</span>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Michael Johnson</h6>
+                                <small class="text-muted">Marketing Manager</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-3">"Finally landed my dream job! The ability to create multiple resumes for different roles was a game-changer."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <span class="fw-bold">EP</span>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">Emily Parker</h6>
+                                <small class="text-muted">Data Scientist</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Section -->
+{% if recent_posts %}
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Resume Tips & Career Advice</h2>
+            <p class="lead text-muted">Expert insights to help you succeed</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for post in recent_posts %}
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    {% if post.featured_image %}
+                    <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
+                    {% else %}
+                    <div class="bg-gradient text-white p-5 text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="bi bi-journal-text display-1"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <small class="text-muted">{{ post.published_at|date:"M d, Y" }} • {{ post.views }} views</small>
+                        <h5 class="card-title mt-2">{{ post.title }}</h5>
+                        <p class="card-text text-muted">{{ post.excerpt|truncatewords:20 }}</p>
+                        <a href="{% url 'resumes:blog_detail' post.slug %}" class="btn btn-outline-primary btn-sm">
+                            Read More <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'resumes:blog_list' %}" class="btn btn-outline-primary">
+                View All Articles <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container text-center">
+        <h2 class="display-4 fw-bold mb-4">Ready to Build Your Perfect Resume?</h2>
+        <p class="lead mb-4">Join thousands of successful job seekers. Start creating your resume today!</p>
+        <a href="{% url 'resumes:resume_builder_step1_new' %}" class="btn btn-light btn-lg px-5 py-3">
+            <i class="bi bi-rocket-takeoff"></i> Create Your Resume Now
+        </a>
+        <p class="mt-3 mb-0 opacity-75">
+            <small>No credit card required • Free forever • Takes only 5 minutes</small>
+        </p>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Frequently Asked Questions</h2>
+            <p class="lead text-muted">Everything you need to know</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                Is this resume builder really free?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes! Our resume builder is completely free to use. You can create unlimited resumes, use all templates, and export PDFs at no cost.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                What is ATS optimization?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                ATS (Applicant Tracking System) optimization ensures your resume can be properly read by automated systems that many companies use to screen applications. Our tool analyzes your resume and provides specific suggestions to improve your ATS score.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                Can I edit my resume after creating it?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Absolutely! You can edit your resume anytime. All your resumes are saved in your dashboard where you can access and modify them whenever needed.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                How many resumes can I create?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                You can create unlimited resumes! We recommend creating different versions tailored to specific job types or industries for better results.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                Is my data secure?
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes! We take security seriously. All data is encrypted, and we never share your information with third parties. Your resumes are private and only accessible by you.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    }
+    
+    .template-card {
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .template-card:hover {
+        transform: scale(1.05);
+    }
+    
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 500px;
+        height: 500px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    
+    .feature-icon {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: var(--primary-color);
+        color: white;
+    }
+</style>
+{% endblock %}

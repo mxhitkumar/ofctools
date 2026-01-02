@@ -1,0 +1,496 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ resume.full_name }} - Creative Resume</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #fff;
+        }
+        
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+        }
+        
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: white;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            border: 5px solid rgba(255,255,255,0.3);
+        }
+        
+        .profile-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .profile-title {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .contact-item {
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            word-break: break-word;
+        }
+        
+        .contact-icon {
+            width: 24px;
+            margin-right: 10px;
+            opacity: 0.8;
+        }
+        
+        .contact-item a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .skill-item {
+            margin-bottom: 15px;
+        }
+        
+        .skill-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .skill-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .skill-progress {
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 40px;
+            background: white;
+        }
+        
+        .summary-section {
+            margin-bottom: 40px;
+        }
+        
+        .summary-title {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .summary-title::before {
+            content: '';
+            width: 5px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-right: 15px;
+            border-radius: 10px;
+        }
+        
+        .summary-text {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #555;
+            text-align: justify;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-right: 15px;
+            border-radius: 10px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 30px;
+            border-left: 2px solid #e9ecef;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px white, 0 0 0 6px #667eea;
+        }
+        
+        .item-header {
+            margin-bottom: 10px;
+        }
+        
+        .company,
+        .institution {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .position,
+        .degree {
+            font-size: 16px;
+            color: #667eea;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+        
+        .date-location {
+            font-size: 14px;
+            color: #95a5a6;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #555;
+        }
+        
+        .description ul {
+            margin-left: 20px;
+        }
+        
+        .description li {
+            margin-bottom: 5px;
+        }
+        
+        .cert-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .cert-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .cert-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .cert-org {
+            color: #667eea;
+            font-size: 14px;
+        }
+        
+        @media print {
+            .container {
+                grid-template-columns: 250px 1fr;
+            }
+            
+            .sidebar {
+                padding: 30px 20px;
+            }
+            
+            .main-content {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Profile -->
+            <div class="profile-section">
+                <div class="profile-image">
+                    {{ resume.full_name|slice:":1"|upper }}
+                </div>
+                <div class="profile-name">{{ resume.full_name }}</div>
+                {% if resume.target_job_title %}
+                <div class="profile-title">{{ resume.target_job_title }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Contact -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">Contact</div>
+                {% if resume.email %}
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <a href="mailto:{{ resume.email }}">{{ resume.email }}</a>
+                </div>
+                {% endif %}
+                {% if resume.phone %}
+                <div class="contact-item">
+                    <span class="contact-icon">📱</span>
+                    {{ resume.phone }}
+                </div>
+                {% endif %}
+                {% if resume.location %}
+                <div class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    {{ resume.location }}
+                </div>
+                {% endif %}
+                {% if resume.linkedin_url %}
+                <div class="contact-item">
+                    <span class="contact-icon">💼</span>
+                    <a href="{{ resume.linkedin_url }}" target="_blank">LinkedIn</a>
+                </div>
+                {% endif %}
+                {% if resume.portfolio_url %}
+                <div class="contact-item">
+                    <span class="contact-icon">🌐</span>
+                    <a href="{{ resume.portfolio_url }}" target="_blank">Portfolio</a>
+                </div>
+                {% endif %}
+                {% if resume.github_url %}
+                <div class="contact-item">
+                    <span class="contact-icon">💻</span>
+                    <a href="{{ resume.github_url }}" target="_blank">GitHub</a>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Skills -->
+            {% if skills %}
+            <div class="sidebar-section">
+                <div class="sidebar-title">Skills</div>
+                {% for skill in skills %}
+                <div class="skill-item">
+                    <div class="skill-name">
+                        <span>{{ skill.name }}</span>
+                        <span>
+                            {% if skill.proficiency == 'expert' %}★★★★★
+                            {% elif skill.proficiency == 'advanced' %}★★★★☆
+                            {% elif skill.proficiency == 'intermediate' %}★★★☆☆
+                            {% else %}★★☆☆☆{% endif %}
+                        </span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 
+                            {% if skill.proficiency == 'expert' %}100%
+                            {% elif skill.proficiency == 'advanced' %}80%
+                            {% elif skill.proficiency == 'intermediate' %}60%
+                            {% else %}40%{% endif %}
+                        "></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Summary -->
+            {% if resume.summary %}
+            <div class="summary-section">
+                <h2 class="summary-title">About Me</h2>
+                <p class="summary-text">{{ resume.summary }}</p>
+            </div>
+            {% endif %}
+            
+            <!-- Experience -->
+            {% if experiences %}
+            <div class="section">
+                <h2 class="section-title">Experience</h2>
+                {% for exp in experiences %}
+                <div class="timeline-item">
+                    <div class="item-header">
+                        <div class="company">{{ exp.company }}</div>
+                        <div class="position">{{ exp.position }}</div>
+                        <div class="date-location">
+                            {{ exp.start_date|date:"M Y" }} - 
+                            {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}
+                            {% if exp.location %} • {{ exp.location }}{% endif %}
+                        </div>
+                    </div>
+                    <div class="description">
+                        {{ exp.description|linebreaks }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Projects -->
+            {% if projects %}
+            <div class="section">
+                <h2 class="section-title">Projects</h2>
+                {% for project in projects %}
+                <div class="timeline-item">
+                    <div class="item-header">
+                        <div class="company">{{ project.title }}</div>
+                        {% if project.start_date %}
+                        <div class="date-location">
+                            {{ project.start_date|date:"M Y" }}
+                            {% if project.end_date %} - {{ project.end_date|date:"M Y" }}{% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="description">
+                        <p>{{ project.description }}</p>
+                        <p><strong>Technologies:</strong> {{ project.technologies }}</p>
+                        {% if project.project_url or project.github_url %}
+                        <p>
+                            {% if project.project_url %}
+                            <a href="{{ project.project_url }}" target="_blank">🔗 Live Demo</a>
+                            {% endif %}
+                            {% if project.github_url %}
+                            <a href="{{ project.github_url }}" target="_blank" style="margin-left: 15px;">💻 GitHub</a>
+                            {% endif %}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Education -->
+            {% if educations %}
+            <div class="section">
+                <h2 class="section-title">Education</h2>
+                {% for edu in educations %}
+                <div class="timeline-item">
+                    <div class="item-header">
+                        <div class="institution">{{ edu.institution }}</div>
+                        <div class="degree">{{ edu.get_degree_display }} in {{ edu.field_of_study }}</div>
+                        <div class="date-location">
+                            {{ edu.start_date|date:"Y" }} - 
+                            {% if edu.end_date %}{{ edu.end_date|date:"Y" }}{% else %}Present{% endif %}
+                            {% if edu.location %} • {{ edu.location }}{% endif %}
+                        </div>
+                    </div>
+                    {% if edu.gpa or edu.description %}
+                    <div class="description">
+                        {% if edu.gpa %}<p><strong>GPA:</strong> {{ edu.gpa }}</p>{% endif %}
+                        {% if edu.description %}<p>{{ edu.description }}</p>{% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Certifications -->
+            {% if certifications %}
+            <div class="section">
+                <h2 class="section-title">Certifications</h2>
+                <div class="cert-grid">
+                    {% for cert in certifications %}
+                    <div class="cert-item">
+                        <div class="cert-name">{{ cert.name }}</div>
+                        <div class="cert-org">{{ cert.issuing_organization }}</div>
+                        <div class="date-location">
+                            Issued: {{ cert.issue_date|date:"M Y" }}
+                            {% if cert.expiry_date %} • Expires: {{ cert.expiry_date|date:"M Y" }}{% endif %}
+                        </div>
+                        {% if cert.credential_url %}
+                        <a href="{{ cert.credential_url }}" target="_blank" style="font-size: 13px; color: #667eea;">Verify Credential →</a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

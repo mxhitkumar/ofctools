@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Resume Builder{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'resumes:landing' %}">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="card-body p-4">
+                    <h2><i class="bi bi-person-circle"></i> Welcome back, {{ user.first_name|default:user.username }}!</h2>
+                    <p class="mb-0">Manage your resumes, check ATS scores, and create new opportunities.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="display-4 text-primary mb-2">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <h3 class="mb-0">{{ total_resumes }}</h3>
+                    <p class="text-muted mb-0">Total Resumes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="display-4 text-success mb-2">
+                        <i class="bi bi-bar-chart"></i>
+                    </div>
+                    <h3 class="mb-0">
+                        {% if resumes %}
+                            {{ resumes|first.ats_score }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </h3>
+                    <p class="text-muted mb-0">Top ATS Score</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="display-4 text-warning mb-2">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h3 class="mb-0">{{ recent_analyses|length }}</h3>
+                    <p class="text-muted mb-0">Recent Analyses</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'resumes:resume_builder_step1_new' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> Create New Resume
+                </a>
+                <a href="{% url 'resumes:blog_list' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-lightbulb"></i> Resume Tips
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- My Resumes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-folder2-open"></i> My Resumes</h5>
+                    <span class="badge bg-light text-dark">{{ total_resumes }} total</span>
+                </div>
+                <div class="card-body">
+                    {% if resumes %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Resume Title</th>
+                                        <th>Template</th>
+                                        <th>ATS Score</th>
+                                        <th>Last Updated</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for resume in resumes %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ resume.title }}</strong><br>
+                                            <small class="text-muted">{{ resume.full_name }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">
+                                                {{ resume.get_template_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if resume.ats_score >= 80 %}
+                                                <span class="badge bg-success">{{ resume.ats_score }}/100</span>
+                                            {% elif resume.ats_score >= 60 %}
+                                                <span class="badge bg-warning">{{ resume.ats_score }}/100</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">{{ resume.ats_score }}/100</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small>{{ resume.updated_at|date:"M d, Y" }}</small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{% url 'resumes:resume_preview' resume.pk %}" 
+                                                   class="btn btn-outline-primary" 
+                                                   title="Preview">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a href="{% url 'resumes:resume_builder_step1' resume.pk %}" 
+                                                   class="btn btn-outline-secondary"
+                                                   title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="{% url 'resumes:ats_analyze' resume.pk %}" 
+                                                   class="btn btn-outline-info"
+                                                   title="ATS Check">
+                                                    <i class="bi bi-bar-chart"></i>
+                                                </a>
+                                                <a href="{% url 'resumes:export_pdf' resume.pk %}" 
+                                                   class="btn btn-outline-success"
+                                                   title="Download PDF">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                                <a href="{% url 'resumes:resume_duplicate' resume.pk %}" 
+                                                   class="btn btn-outline-warning"
+                                                   title="Duplicate">
+                                                    <i class="bi bi-files"></i>
+                                                </a>
+                                                <a href="{% url 'resumes:resume_delete' resume.pk %}" 
+                                                   class="btn btn-outline-danger"
+                                                   title="Delete"
+                                                   onclick="return confirmAction('Are you sure you want to delete this resume?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="display-1 text-muted mb-3">
+                                <i class="bi bi-file-earmark-x"></i>
+                            </div>
+                            <h4>No resumes yet</h4>
+                            <p class="text-muted mb-4">Create your first professional resume to get started!</p>
+                            <a href="{% url 'resumes:resume_builder_step1_new' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-plus-circle"></i> Create Your First Resume
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent ATS Analyses -->
+    {% if recent_analyses %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent ATS Analyses</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for analysis in recent_analyses %}
+                        <a href="{% url 'resumes:ats_results' analysis.pk %}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ analysis.resume.title }}</h6>
+                                    <small class="text-muted">{{ analysis.created_at|date:"M d, Y - g:i A" }}</small>
+                                </div>
+                                <div>
+                                    {% if analysis.score >= 80 %}
+                                        <span class="badge bg-success fs-6">{{ analysis.score }}/100</span>
+                                    {% elif analysis.score >= 60 %}
+                                        <span class="badge bg-warning fs-6">{{ analysis.score }}/100</span>
+                                    {% else %}
+                                        <span class="badge bg-danger fs-6">{{ analysis.score }}/100</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Tips Section -->
+    <div class="row mt-4">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-lightbulb text-warning"></i> Pro Tips</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Keep your resume to 1-2 pages</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Use action verbs and quantifiable achievements</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Tailor your resume for each job application</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Aim for an ATS score of 80+ for best results</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-info-circle text-info"></i> Did You Know?</h5>
+                    <p>75% of resumes never make it past ATS (Applicant Tracking Systems). Our optimizer helps ensure yours does!</p>
+                    <a href="{% url 'resumes:blog_list' %}" class="btn btn-sm btn-outline-info">
+                        Learn More <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .list-group-item {
+        border-left: 4px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+        border-left-color: var(--primary-color);
+        background-color: #f8f9fa;
+    }
+    
+    .display-1 {
+        font-size: 4rem;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Basic Information - Resume Builder{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'resumes:landing' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'resumes:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Resume Builder</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Progress Indicator -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">Resume Builder Progress</h6>
+                        <span class="badge bg-primary">Step 1 of 5</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-primary fw-bold">1. Basic Info</small>
+                        <small class="text-muted">2. Experience</small>
+                        <small class="text-muted">3. Education</small>
+                        <small class="text-muted">4. Skills</small>
+                        <small class="text-muted">5. Template</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Form -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-badge"></i> Step 1: Basic Information
+                    </h4>
+                    <p class="mb-0 mt-2 text-white-50">Let's start with your contact information and professional summary</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" id="basicInfoForm">
+                        {% csrf_token %}
+                        
+                        <!-- Resume Title -->
+                        <div class="mb-4">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">
+                                <i class="bi bi-bookmark"></i> Resume Title
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.title }}
+                            <small class="form-text text-muted">
+                                Internal name for this resume (e.g., "Software Engineer - Tech Corp")
+                            </small>
+                            {% if form.title.errors %}
+                                <div class="text-danger mt-1">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <hr class="my-4">
+                        <h5 class="mb-3"><i class="bi bi-person"></i> Personal Information</h5>
+                        
+                        <!-- Full Name -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                                    Full Name <span class="text-danger">*</span>
+                                </label>
+                                {{ form.full_name }}
+                                {% if form.full_name.errors %}
+                                    <div class="text-danger mt-1">{{ form.full_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    Email Address <span class="text-danger">*</span>
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger mt-1">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Phone and Location -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.phone.id_for_label }}" class="form-label">
+                                    Phone Number
+                                </label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger mt-1">{{ form.phone.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.location.id_for_label }}" class="form-label">
+                                    Location
+                                </label>
+                                {{ form.location }}
+                                {% if form.location.errors %}
+                                    <div class="text-danger mt-1">{{ form.location.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        <h5 class="mb-3"><i class="bi bi-link-45deg"></i> Online Profiles (Optional)</h5>
+                        
+                        <!-- LinkedIn -->
+                        <div class="mb-3">
+                            <label for="{{ form.linkedin_url.id_for_label }}" class="form-label">
+                                <i class="bi bi-linkedin text-primary"></i> LinkedIn Profile
+                            </label>
+                            {{ form.linkedin_url }}
+                            {% if form.linkedin_url.errors %}
+                                <div class="text-danger mt-1">{{ form.linkedin_url.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Portfolio -->
+                        <div class="mb-3">
+                            <label for="{{ form.portfolio_url.id_for_label }}" class="form-label">
+                                <i class="bi bi-globe text-info"></i> Portfolio Website
+                            </label>
+                            {{ form.portfolio_url }}
+                            {% if form.portfolio_url.errors %}
+                                <div class="text-danger mt-1">{{ form.portfolio_url.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- GitHub -->
+                        <div class="mb-3">
+                            <label for="{{ form.github_url.id_for_label }}" class="form-label">
+                                <i class="bi bi-github"></i> GitHub Profile
+                            </label>
+                            {{ form.github_url }}
+                            {% if form.github_url.errors %}
+                                <div class="text-danger mt-1">{{ form.github_url.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <hr class="my-4">
+                        <h5 class="mb-3"><i class="bi bi-card-text"></i> Professional Summary</h5>
+                        
+                        <!-- Summary -->
+                        <div class="mb-3">
+                            <label for="{{ form.summary.id_for_label }}" class="form-label">
+                                Professional Summary
+                            </label>
+                            {{ form.summary }}
+                            <small class="form-text text-muted">
+                                Write 3-5 sentences highlighting your key skills, experience, and career goals.
+                            </small>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted">Aim for 50-100 words</small>
+                                <small id="summaryWordCount" class="text-muted">0 words</small>
+                            </div>
+                            {% if form.summary.errors %}
+                                <div class="text-danger mt-1">{{ form.summary.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                            <a href="{% url 'resumes:dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Next: Work Experience <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Help Card -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6><i class="bi bi-lightbulb text-warning"></i> Quick Tips</h6>
+                    <ul class="mb-0 small">
+                        <li>Use a professional email address</li>
+                        <li>Include your city and state (optional: full address)</li>
+                        <li>Your summary should highlight your unique value proposition</li>
+                        <li>Link to professional profiles to show more of your work</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Word counter for summary
+    const summaryTextarea = document.querySelector('#{{ form.summary.id_for_label }}');
+    const wordCountDisplay = document.getElementById('summaryWordCount');
+    
+    if (summaryTextarea && wordCountDisplay) {
+        function updateWordCount() {
+            const text = summaryTextarea.value.trim();
+            const wordCount = text ? text.split(/\s+/).length : 0;
+            wordCountDisplay.textContent = `${wordCount} words`;
+            
+            // Color coding
+            if (wordCount < 50) {
+                wordCountDisplay.className = 'text-warning';
+            } else if (wordCount > 100) {
+                wordCountDisplay.className = 'text-danger';
+            } else {
+                wordCountDisplay.className = 'text-success';
+            }
+        }
+        
+        summaryTextarea.addEventListener('input', updateWordCount);
+        updateWordCount(); // Initial count
+    }
+    
+    // Form validation
+    document.getElementById('basicInfoForm').addEventListener('submit', function(e) {
+        const requiredFields = ['{{ form.title.id_for_label }}', '{{ form.full_name.id_for_label }}', '{{ form.email.id_for_label }}'];
+        let isValid = true;
+        
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields marked with *');
+        } else {
+            showLoading();
+        }
+    });
+    
+    // Auto-save draft (optional feature)
+    let autoSaveTimer;
+    const formInputs = document.querySelectorAll('#basicInfoForm input, #basicInfoForm textarea');
+    
+    formInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                console.log('Auto-saving draft...');
+                // Implement auto-save logic here if needed
+            }, 2000);
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+    
+    .progress-bar {
+        transition: width 0.6s ease;
+    }
+</style>
+{% endblock %}
