@@ -2,10 +2,9 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from .models import (
-    Resume, Experience, Education, Skill, Certification, 
-    Project, ATSAnalysis, BlogPost, UserProfile
-)
+
+from .views import *
+from .models import *
 
 
 class ExperienceInline(admin.TabularInline):

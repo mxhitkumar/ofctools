@@ -336,7 +336,7 @@ ALLOWED_TEMPLATE_EXTENSIONS = ['html', 'htm']
 ALLOWED_STYLE_EXTENSIONS = ['css']
 ALLOWED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp']
 
-"""
+
 # Stripe Configuration
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
@@ -344,4 +344,3 @@ STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
 
 # Site URL
 SITE_URL = os.getenv('SITE_URL', 'http://localhost:8000')
-"""

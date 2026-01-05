@@ -8,12 +8,8 @@ from django.http import HttpResponse, JsonResponse
 from django.db import transaction
 from django.template.loader import render_to_string
 
-from .models import Resume, Experience, Education, Skill, ATSAnalysis, BlogPost
-from .forms import (
-    ResumeBasicForm, ExperienceFormSet, EducationFormSet, 
-    SkillFormSet, CertificationFormSet, ProjectFormSet,
-    TemplateSelectionForm, ATSAnalysisForm
-)
+from .models import *
+from .forms import *
 from .ats_analyzer import ATSAnalyzer
 from .pdf_generator import generate_resume_pdf
 
@@ -326,7 +322,7 @@ def ajax_change_template(request, pk):
 # ============= Blog Views =============
 
 class BlogListView(ListView):
-    """List all published blog posts"""
+    """List all published blog posts""" 
     model = BlogPost
     template_name = 'blog/list.html'
     context_object_name = 'posts'

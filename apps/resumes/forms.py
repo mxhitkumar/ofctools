@@ -1,9 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import (
-    Resume, Experience, Education, Skill, 
-    Certification, Project, ATSAnalysis
-)
+from .models import *
 
 class ResumeBasicForm(forms.ModelForm):
     """Step 1: Basic Information"""
