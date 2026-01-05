@@ -32,4 +32,15 @@ urlpatterns = [
     # Blog
     path('blog/', views.BlogListView.as_view(), name='blog_list'),
     path('blog/<slug:slug>/', views.BlogDetailView.as_view(), name='blog_detail'),
+    
+    path('templates/', views.template_marketplace, name='template_marketplace'),
+    path('templates/upload/', views.upload_custom_template, name='upload_template'),
+    path('templates/my/', views.my_templates, name='my_templates'),
+    path('templates/<slug:slug>/', views.template_detail, name='template_detail'),
+    path('templates/<slug:slug>/use/', views.use_custom_template, name='use_custom_template'),
+    path('templates/<slug:slug>/delete/', views.delete_custom_template, name='delete_custom_template'),
+    
+    
+    path('templates/<slug:slug>/preview/', views.template_preview, name='template_preview'),
+
 ]

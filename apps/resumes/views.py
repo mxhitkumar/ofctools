@@ -362,3 +362,42 @@ def landing_page(request):
         'recent_posts': BlogPost.objects.filter(status='published')[:3]
     }
     return render(request, 'landing.html', context)
+
+from django.views.decorators.clickjacking import xframe_options_exempt
+
+@xframe_options_exempt
+def template_preview(request, slug):
+    """
+    Preview template with sample data (for iframe)
+    """
+    template = get_object_or_404(CustomTemplate, slug=slug, status='approved')
+    
+    # Create sample resume data
+    from django.contrib.auth.models import User
+    sample_user = User.objects.first()
+    
+    # Get a sample resume or create dummy data
+    sample_resume = Resume.objects.filter(user=sample_user).first()
+    
+    if not sample_resume:
+        # Create temporary sample data
+        class SampleResume:
+            full_name = "John Doe"
+            email = "john.doe@example.com"
+            phone = "+1 (555) 123-4567"
+            location = "San Francisco, CA"
+            summary = "Experienced professional with 5+ years in the industry..."
+            linkedin_url = "https://linkedin.com/in/johndoe"
+            portfolio_url = "https://johndoe.com"
+            github_url = "https://github.com/johndoe"
+        
+        sample_resume = SampleResume()
+    
+    try:
+        html_content = SecureTemplateRenderer.render_custom_template(
+            template,
+            sample_resume
+        )
+        return HttpResponse(html_content)
+    except Exception as e:
+        return HttpResponse(f"<h3>Error loading preview: {str(e)}</h3>")

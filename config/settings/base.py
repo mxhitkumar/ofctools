@@ -139,10 +139,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-
-MEDIA_URL = "/media/"
-
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Default primary key field type
@@ -325,3 +323,15 @@ if DEBUG:
     INTERNAL_IPS = [
         '127.0.0.1',
     ]
+
+
+
+
+# File upload settings
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+
+# Allowed file extensions
+ALLOWED_TEMPLATE_EXTENSIONS = ['html', 'htm']
+ALLOWED_STYLE_EXTENSIONS = ['css']
+ALLOWED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp']

@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload Custom Template{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="mb-4">
+                <h1><i class="bi bi-upload"></i> Upload Custom Template</h1>
+                <p class="text-muted">Share your resume template design with the community</p>
+            </div>
+            
+            <!-- Template Guide -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Template Guidelines</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Required Variables:</h6>
+                    <div class="mb-3">
+                        {% for var in template_guide.required_variables %}
+                            <code class="badge bg-danger me-2">{{ var }}</code>
+                        {% endfor %}
+                    </div>
+                    
+                    <h6>Optional Variables:</h6>
+                    <div class="mb-3">
+                        {% for var in template_guide.optional_variables %}
+                            <code class="badge bg-secondary me-2">{{ var }}</code>
+                        {% endfor %}
+                    </div>
+                    
+                    <h6>Available Loops:</h6>
+                    <div class="mb-3">
+                        {% for loop in template_guide.loops %}
+                            <code class="badge bg-info me-2">{% templatetag openblock %} for item in {{ loop }} {% templatetag closeblock %}</code>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#exampleCode">
+                        <i class="bi bi-code-slash"></i> View Example Template
+                    </button>
+                    
+                    <div class="collapse mt-3" id="exampleCode">
+                        <pre class="bg-dark text-light p-3 rounded"><code>{{ template_guide.example_code }}</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upload Form -->
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                        {% csrf_token %}
+                        
+                        <!-- Template Name -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                Template Name <span class="text-danger">*</span>
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger mt-1">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                Description <span class="text-danger">*</span>
+                            </label>
+                            {{ form.description }}
+                            <small class="form-text text-muted">
+                                Describe your template's style, best use cases, and unique features
+                            </small>
+                            {% if form.description.errors %}
+                                <div class="text-danger mt-1">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- HTML File -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                HTML Template File <span class="text-danger">*</span>
+                            </label>
+                            {{ form.html_file }}
+                            <small class="form-text text-muted d-block">
+                                <i class="bi bi-info-circle"></i> Upload your HTML template file (max 2MB)
+                            </small>
+                            {% if form.html_file.errors %}
+                                <div class="text-danger mt-1">{{ form.html_file.errors }}</div>
+                            {% endif %}
+                            <div id="htmlPreview" class="mt-2"></div>
+                        </div>
+                        
+                        <!-- CSS File (Optional) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                CSS File (Optional)
+                            </label>
+                            {{ form.css_file }}
+                            <small class="form-text text-muted d-block">
+                                Upload a separate CSS file or include styles in your HTML
+                            </small>
+                            {% if form.css_file.errors %}
+                                <div class="text-danger mt-1">{{ form.css_file.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Preview Image -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                Preview Image <span class="text-danger">*</span>
+                            </label>
+                            {{ form.preview_image }}
+                            <small class="form-text text-muted d-block">
+                                Upload a screenshot of your template (max 5MB, recommended 800x1131px)
+                            </small>
+                            {% if form.preview_image.errors %}
+                                <div class="text-danger mt-1">{{ form.preview_image.errors }}</div>
+                            {% endif %}
+                            <div id="imagePreview" class="mt-3"></div>
+                        </div>
+                        
+                        <!-- Visibility -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Visibility</label>
+                            {{ form.visibility }}
+                            <small class="form-text text-muted d-block">
+                                Choose who can use your template
+                            </small>
+                        </div>
+                        
+                        <!-- Tags -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tags</label>
+                            {{ form.tags }}
+                            <small class="form-text text-muted d-block">
+                                Add tags to help others find your template (comma-separated)
+                            </small>
+                        </div>
+                        
+                        <!-- Terms -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                <label class="form-check-label" for="termsCheck">
+                                    I confirm that this template is my original work and doesn't contain malicious code
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-upload"></i> Upload Template
+                            </button>
+                            <a href="{% url 'resumes:template_marketplace' %}" class="btn btn-outline-secondary btn-lg">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tips -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6><i class="bi bi-lightbulb"></i> Tips for Great Templates</h6>
+                    <ul class="mb-0 small">
+                        <li>Test your template with sample data before uploading</li>
+                        <li>Ensure your template is responsive and prints well</li>
+                        <li>Use semantic HTML for better ATS compatibility</li>
+                        <li>Avoid using JavaScript or external resources</li>
+                        <li>Include clear section headings and good typography</li>
+                        <li>Make sure all required variables are included</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Preview image on select
+document.getElementById('{{ form.preview_image.id_for_label }}').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').innerHTML = `
+                <div class="border rounded p-2">
+                    <img src="${e.target.result}" class="img-fluid" style="max-height: 300px;">
+                    <p class="small text-muted mb-0 mt-2">Preview: ${file.name}</p>
+                </div>
+            `;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Show HTML file info
+document.getElementById('{{ form.html_file.id_for_label }}').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const size = (file.size / 1024).toFixed(2);
+        document.getElementById('htmlPreview').innerHTML = `
+            <div class="alert alert-info small mb-0">
+                <i class="bi bi-file-earmark-code"></i> 
+                <strong>${file.name}</strong> (${size} KB)
+            </div>
+        `;
+    }
+});
+
+// Form validation
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    if (!document.getElementById('termsCheck').checked) {
+        e.preventDefault();
+        alert('Please accept the terms and conditions');
+        return false;
+    }
+});
+</script>
+{% endblock %}
