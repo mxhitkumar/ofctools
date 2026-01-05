@@ -1,0 +1,493 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics Dashboard - Resume Builder{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin: 12px 0;
+    }
+    
+    .stat-label {
+        color: #718096;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stat-change {
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+    
+    .stat-change.positive {
+        color: #48bb78;
+    }
+    
+    .stat-change.negative {
+        color: #f56565;
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+    
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .chart-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a202c;
+    }
+    
+    .time-selector {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .time-btn {
+        padding: 6px 14px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .time-btn:hover {
+        background: #f7fafc;
+    }
+    
+    .time-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-2">
+                <i class="bi bi-graph-up"></i> Analytics Dashboard
+            </h1>
+            <p class="text-muted">Track your resume performance and job application progress</p>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card">
+                <div class="stat-label">Total Views</div>
+                <div class="stat-value">{{ total_views }}</div>
+                <div class="stat-change positive">
+                    <i class="bi bi-arrow-up"></i> +{{ views_change }}% this week
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card">
+                <div class="stat-label">Downloads</div>
+                <div class="stat-value">{{ total_downloads }}</div>
+                <div class="stat-change positive">
+                    <i class="bi bi-arrow-up"></i> +{{ downloads_change }}% this week
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card">
+                <div class="stat-label">Active Applications</div>
+                <div class="stat-value">{{ active_applications }}</div>
+                <div class="stat-change">
+                    {{ pending_count }} pending responses
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card">
+                <div class="stat-label">Avg. ATS Score</div>
+                <div class="stat-value">{{ avg_ats_score }}<small style="font-size: 1.5rem;">/100</small></div>
+                <div class="stat-change {% if ats_score_change >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="bi bi-arrow-{% if ats_score_change >= 0 %}up{% else %}down{% endif %}"></i> 
+                    {{ ats_score_change|floatformat:1 }}% vs last month
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="row">
+        <!-- Resume Views Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Resume Views Over Time</h3>
+                    <div class="time-selector">
+                        <button class="time-btn" data-period="7">7D</button>
+                        <button class="time-btn active" data-period="30">30D</button>
+                        <button class="time-btn" data-period="90">90D</button>
+                    </div>
+                </div>
+                <canvas id="viewsChart" height="80"></canvas>
+            </div>
+        </div>
+        
+        <!-- ATS Score Distribution -->
+        <div class="col-lg-4 mb-4">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">ATS Score Distribution</h3>
+                </div>
+                <canvas id="atsScoreChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Application Funnel & Resume Performance -->
+    <div class="row">
+        <!-- Application Funnel -->
+        <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Application Funnel</h3>
+                </div>
+                <canvas id="applicationFunnelChart" height="100"></canvas>
+            </div>
+        </div>
+        
+        <!-- Top Performing Resumes -->
+        <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Resume Performance</h3>
+                </div>
+                <canvas id="resumePerformanceChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="chart-container">
+                <h3 class="chart-title mb-3">Recent Activity</h3>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Resume</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for activity in recent_activities %}
+                            <tr>
+                                <td>{{ activity.date|date:"M d, Y g:i A" }}</td>
+                                <td>
+                                    <a href="{% url 'resumes:resume_preview' activity.resume.pk %}">
+                                        {{ activity.resume.title }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if activity.action == 'view' %}info{% elif activity.action == 'download' %}success{% else %}secondary{% endif %}">
+                                        {{ activity.action|title }}
+                                    </span>
+                                </td>
+                                <td>{{ activity.details }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    No activity yet
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+// Chart.js Configuration
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+Chart.defaults.color = '#718096';
+
+// Views Over Time Chart
+const viewsCtx = document.getElementById('viewsChart').getContext('2d');
+const viewsChart = new Chart(viewsCtx, {
+    type: 'line',
+    data: {
+        labels: {{ views_labels|safe }},
+        datasets: [{
+            label: 'Views',
+            data: {{ views_data|safe }},
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#667eea',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                padding: 12,
+                cornerRadius: 8,
+                titleFont: {
+                    size: 14
+                },
+                bodyFont: {
+                    size: 13
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                },
+                ticks: {
+                    precision: 0
+                }
+            }
+        },
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+        }
+    }
+});
+
+// ATS Score Distribution Chart
+const atsCtx = document.getElementById('atsScoreChart').getContext('2d');
+const atsScoreChart = new Chart(atsCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Excellent (80-100)', 'Good (60-79)', 'Needs Work (<60)'],
+        datasets: [{
+            data: {{ ats_distribution|safe }},
+            backgroundColor: [
+                '#48bb78',
+                '#f6ad55',
+                '#f56565'
+            ],
+            borderWidth: 0,
+            hoverOffset: 10
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 15,
+                    usePointStyle: true,
+                    font: {
+                        size: 12
+                    }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const label = context.label || '';
+                        const value = context.parsed || 0;
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = ((value / total) * 100).toFixed(1);
+                        return `${label}: ${value} (${percentage}%)`;
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Application Funnel Chart
+const funnelCtx = document.getElementById('applicationFunnelChart').getContext('2d');
+const funnelChart = new Chart(funnelCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Applied', 'Screening', 'Interview', 'Offer'],
+        datasets: [{
+            label: 'Applications',
+            data: {{ application_funnel|safe }},
+            backgroundColor: [
+                '#667eea',
+                '#764ba2',
+                '#f093fb',
+                '#4facfe'
+            ],
+            borderRadius: 8,
+            barThickness: 50
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            y: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Resume Performance Chart
+const perfCtx = document.getElementById('resumePerformanceChart').getContext('2d');
+const performanceChart = new Chart(perfCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ resume_names|safe }},
+        datasets: [{
+            label: 'Views',
+            data: {{ resume_views|safe }},
+            backgroundColor: 'rgba(102, 126, 234, 0.8)',
+            borderRadius: 6,
+            barThickness: 30
+        }, {
+            label: 'Downloads',
+            data: {{ resume_downloads|safe }},
+            backgroundColor: 'rgba(72, 187, 120, 0.8)',
+            borderRadius: 6,
+            barThickness: 30
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'top',
+                align: 'end',
+                labels: {
+                    usePointStyle: true,
+                    boxWidth: 8,
+                    padding: 15
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            }
+        }
+    }
+});
+
+// Time Period Selector
+document.querySelectorAll('.time-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Remove active class from all buttons
+        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+        
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        // Get period and reload data
+        const period = this.dataset.period;
+        loadViewsData(period);
+    });
+});
+
+function loadViewsData(period) {
+    // Make AJAX call to get new data
+    fetch(`/api/analytics/views/?period=${period}`)
+        .then(response => response.json())
+        .then(data => {
+            viewsChart.data.labels = data.labels;
+            viewsChart.data.datasets[0].data = data.values;
+            viewsChart.update();
+        })
+        .catch(error => console.error('Error loading data:', error));
+}
+</script>
+{% endblock %}

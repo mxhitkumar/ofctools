@@ -265,3 +265,57 @@ class UserProfileAdmin(admin.ModelAdmin):
 admin.site.site_header = 'Resume Builder Admin'
 admin.site.site_title = 'Resume Builder'
 admin.site.index_title = 'Dashboard'
+
+
+
+@admin.register(CustomTemplate)
+class CustomTemplateAdmin(admin.ModelAdmin):
+    list_display = (
+        'name', 'creator', 'status', 'visibility', 
+        'usage_count', 'rating', 'created_at'
+    )
+    list_filter = ('status', 'visibility', 'created_at')
+    search_fields = ('name', 'description', 'creator__username')
+    readonly_fields = ('usage_count', 'rating', 'created_at', 'updated_at')
+    
+    fieldsets = (
+        ('Template Info', {
+            'fields': ('name', 'slug', 'description', 'creator')
+        }),
+        ('Files', {
+            'fields': ('html_file', 'css_file', 'preview_image')
+        }),
+        ('Settings', {
+            'fields': ('visibility', 'status', 'tags')
+        }),
+        ('Configuration', {
+            'fields': ('template_config',),
+            'classes': ('collapse',)
+        }),
+        ('Review', {
+            'fields': ('reviewed_by', 'review_notes')
+        }),
+        ('Stats', {
+            'fields': ('usage_count', 'rating', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    actions = ['approve_templates', 'reject_templates']
+    
+    def approve_templates(self, request, queryset):
+        queryset.update(status='approved', reviewed_by=request.user)
+        self.message_user(request, f'{queryset.count()} template(s) approved.')
+    approve_templates.short_description = 'Approve selected templates'
+    
+    def reject_templates(self, request, queryset):
+        queryset.update(status='rejected', reviewed_by=request.user)
+        self.message_user(request, f'{queryset.count()} template(s) rejected.')
+    reject_templates.short_description = 'Reject selected templates'
+
+
+@admin.register(TemplateRating)
+class TemplateRatingAdmin(admin.ModelAdmin):
+    list_display = ('template', 'user', 'rating', 'created_at')
+    list_filter = ('rating', 'created_at')
+    search_fields = ('template__name', 'user__username', 'review')

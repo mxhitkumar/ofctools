@@ -324,3 +324,109 @@ ProjectFormSet = inlineformset_factory(
     validate_min=False,
     can_delete_extra=True
 )
+
+
+class CustomTemplateUploadForm(forms.ModelForm):
+    """Form for uploading custom templates"""
+    
+    class Meta:
+        model = CustomTemplate
+        fields = [
+            'name', 'description', 'html_file', 'css_file', 
+            'preview_image', 'visibility', 'tags'
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Modern Tech Resume'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe your template...'
+            }),
+            'html_file': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': '.html'
+            }),
+            'css_file': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': '.css'
+            }),
+            'preview_image': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+            'visibility': forms.Select(attrs={'class': 'form-control'}),
+            'tags': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'modern, tech, creative (comma-separated)'
+            }),
+        }
+    
+    def clean_html_file(self):
+        """Validate HTML file"""
+        html_file = self.cleaned_data.get('html_file')
+        
+        if html_file:
+            # Check file size (max 2MB)
+            if html_file.size > 2 * 1024 * 1024:
+                raise forms.ValidationError("HTML file must be less than 2MB")
+            
+            # Read and validate HTML content
+            content = html_file.read().decode('utf-8')
+            html_file.seek(0)  # Reset file pointer
+            
+            # Check for required template variables
+            required_vars = ['{{ resume.full_name }}', '{{ resume.email }}']
+            missing_vars = [var for var in required_vars if var not in content]
+            
+            if missing_vars:
+                raise forms.ValidationError(
+                    f"Template must include: {', '.join(missing_vars)}"
+                )
+            
+            # Check for potentially dangerous content
+            dangerous_patterns = ['<script', 'javascript:', 'onerror=', 'onclick=']
+            for pattern in dangerous_patterns:
+                if pattern.lower() in content.lower():
+                    raise forms.ValidationError(
+                        f"Template contains potentially unsafe content: {pattern}"
+                    )
+        
+        return html_file
+    
+    def clean_preview_image(self):
+        """Validate preview image"""
+        image = self.cleaned_data.get('preview_image')
+        
+        if image:
+            # Check file size (max 5MB)
+            if image.size > 5 * 1024 * 1024:
+                raise forms.ValidationError("Image must be less than 5MB")
+            
+            # Validate image format
+            from PIL import Image
+            try:
+                img = Image.open(image)
+                img.verify()
+            except Exception:
+                raise forms.ValidationError("Invalid image file")
+        
+        return image
+
+
+class TemplateRatingForm(forms.ModelForm):
+    """Form for rating templates"""
+    
+    class Meta:
+        model = TemplateRating
+        fields = ['rating', 'review']
+        widgets = {
+            'rating': forms.RadioSelect(choices=[(i, f'{i} ★') for i in range(1, 6)]),
+            'review': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Share your thoughts about this template...'
+            })
+        }
