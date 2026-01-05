@@ -126,7 +126,7 @@ class SecureTemplateRenderer:
 
 from .template_renderer import SecureTemplateRenderer
 
-@login_required
+# @login_required
 def resume_preview(request, pk):
     """Preview resume with selected template (including custom)"""
     resume = get_object_or_404(Resume, pk=pk, user=request.user)

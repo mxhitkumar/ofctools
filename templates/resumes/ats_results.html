@@ -1,0 +1,16 @@
+<div class="ats-score-card">
+    <div class="score-circle" data-score="{{ analysis.score }}">
+        <span class="score-number">{{ analysis.score }}</span>
+        <span class="score-label">/100</span>
+    </div>
+</div>
+
+<script>
+// Animate score circle
+const circle = document.querySelector('.score-circle');
+const score = circle.dataset.score;
+circle.style.background = `conic-gradient(
+    #3498db ${score * 3.6}deg,
+    #ecf0f1 ${score * 3.6}deg
+)`;
+</script>

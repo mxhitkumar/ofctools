@@ -17,7 +17,18 @@ class Resume(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resumes')
     title = models.CharField(max_length=200, help_text="Internal name for this resume")
-    template = models.CharField(max_length=50, choices=TEMPLATE_CHOICES, default='professional')
+    template = models.CharField(
+            max_length=50, 
+            choices=TEMPLATE_CHOICES + [('custom', 'Custom Template')],
+            default='professional'
+        )
+    custom_template = models.ForeignKey(
+            'CustomTemplate',
+            on_delete=models.SET_NULL,
+            null=True,
+            blank=True,
+            related_name='resumes_using'
+        )
     
     # Personal Information
     full_name = models.CharField(max_length=200)

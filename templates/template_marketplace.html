@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Template Marketplace - Resume Builder{% endblock %}
+
+{% block extra_css %}
+<style>
+    .template-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        background: white;
+        height: 100%;
+    }
+    
+    .template-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .template-preview {
+        position: relative;
+        width: 100%;
+        padding-top: 141.4%; /* A4 ratio */
+        overflow: hidden;
+        background: #f8f9fa;
+    }
+    
+    .template-preview img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .template-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 1;
+    }
+    
+    .template-info {
+        padding: 20px;
+    }
+    
+    .template-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #1a202c;
+    }
+    
+    .template-meta {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: #718096;
+        font-size: 0.875rem;
+        margin-bottom: 12px;
+    }
+    
+    .template-meta i {
+        margin-right: 4px;
+    }
+    
+    .template-stats {
+        display: flex;
+        gap: 20px;
+        padding-top: 12px;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .template-stat {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.875rem;
+        color: #4a5568;
+    }
+    
+    .rating-stars {
+        color: #fbbf24;
+    }
+    
+    .search-bar {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+    
+    .filter-btn {
+        padding: 8px 16px;
+        border: 2px solid #e2e8f0;
+        background: white;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    
+    .filter-btn:hover,
+    .filter-btn.active {
+        border-color: #667eea;
+        background: #667eea;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="mb-2">
+                <i class="bi bi-grid-3x3"></i> Template Marketplace
+            </h1>
+            <p class="text-muted">Browse and use custom resume templates created by the community</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <a href="{% url 'resumes:upload_template' %}" class="btn btn-primary">
+                <i class="bi bi-upload"></i> Upload Your Template
+            </a>
+            <a href="{% url 'resumes:my_templates' %}" class="btn btn-outline-primary">
+                <i class="bi bi-folder"></i> My Templates
+            </a>
+        </div>
+    </div>
+    
+    <!-- Search & Filters -->
+    <div class="search-bar">
+        <form method="GET" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" 
+                       name="q" 
+                       class="form-control form-control-lg" 
+                       placeholder="Search templates..."
+                       value="{{ search_query }}">
+            </div>
+            
+            <div class="col-md-3">
+                <select name="visibility" class="form-control form-control-lg">
+                    <option value="all" {% if visibility == 'all' %}selected{% endif %}>All Templates</option>
+                    <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public</option>
+                    <option value="premium" {% if visibility == 'premium' %}selected{% endif %}>Premium</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <select name="sort" class="form-control form-control-lg">
+                    <option value="popular" {% if sort_by == 'popular' %}selected{% endif %}>Most Popular</option>
+                    <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Highest Rated</option>
+                    <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest</option>
+                </select>
+            </div>
+            
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Results Count -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <p class="text-muted">
+                Found {{ templates.paginator.count }} template{{ templates.paginator.count|pluralize }}
+            </p>
+        </div>
+    </div>
+    
+    <!-- Template Grid -->
+    <div class="row g-4">
+        {% for template in templates %}
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="template-card">
+                <!-- Preview Image -->
+                <div class="template-preview">
+                    {% if template.preview_image %}
+                        <img src="{{ template.preview_image.url }}" alt="{{ template.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/400x565/667eea/ffffff?text={{ template.name|slice:':1' }}" alt="{{ template.name }}">
+                    {% endif %}
+                    
+                    <!-- Badge -->
+                    {% if template.visibility == 'premium' %}
+                        <span class="badge bg-warning template-badge">
+                            <i class="bi bi-star-fill"></i> Premium
+                        </span>
+                    {% elif template.visibility == 'public' %}
+                        <span class="badge bg-success template-badge">
+                            <i class="bi bi-check-circle-fill"></i> Free
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Info -->
+                <div class="template-info">
+                    <h3 class="template-title">{{ template.name }}</h3>
+                    
+                    <div class="template-meta">
+                        <span>
+                            <i class="bi bi-person"></i>
+                            {{ template.creator.username }}
+                        </span>
+                        <span class="rating-stars">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= template.rating %}
+                                    <i class="bi bi-star-fill"></i>
+                                {% else %}
+                                    <i class="bi bi-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    
+                    <p class="text-muted small">
+                        {{ template.description|truncatewords:15 }}
+                    </p>
+                    
+                    <div class="template-stats">
+                        <div class="template-stat">
+                            <i class="bi bi-eye"></i>
+                            {{ template.usage_count }}
+                        </div>
+                        <div class="template-stat">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            {{ template.rating|floatformat:1 }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="{% url 'resumes:template_detail' template.slug %}" 
+                           class="btn btn-primary">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <h3 class="mt-3">No templates found</h3>
+                <p class="text-muted">Try adjusting your search or filters</p>
+                <a href="{% url 'resumes:upload_template' %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-upload"></i> Upload First Template
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if templates.has_other_pages %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if templates.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}{% if visibility != 'all' %}&visibility={{ visibility }}{% endif %}&sort={{ sort_by }}">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ templates.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if visibility != 'all' %}&visibility={{ visibility }}{% endif %}&sort={{ sort_by }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ templates.number }} of {{ templates.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if templates.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ templates.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if visibility != 'all' %}&visibility={{ visibility }}{% endif %}&sort={{ sort_by }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ templates.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}{% if visibility != 'all' %}&visibility={{ visibility }}{% endif %}&sort={{ sort_by }}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Lazy load images
+document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('.template-preview img');
+    
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.src;
+                observer.unobserve(img);
+            }
+        });
+    });
+    
+    images.forEach(img => imageObserver.observe(img));
+});
+</script>
+{% endblock %}

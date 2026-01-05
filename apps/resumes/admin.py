@@ -318,3 +318,24 @@ class TemplateRatingAdmin(admin.ModelAdmin):
     list_display = ('template', 'user', 'rating', 'created_at')
     list_filter = ('rating', 'created_at')
     search_fields = ('template__name', 'user__username', 'review')
+    
+    
+# In admin.py
+@admin.action(description='Export selected resumes as PDF')
+def export_resumes_as_pdf(modeladmin, request, queryset):
+    import zipfile
+    from io import BytesIO
+    
+    zip_buffer = BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+        for resume in queryset:
+            pdf = generate_resume_pdf(resume)
+            filename = f"{resume.full_name}_Resume.pdf"
+            zip_file.writestr(filename, pdf)
+    
+    response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="resumes.zip"'
+    return response
+
+class ResumeAdmin(admin.ModelAdmin):
+    actions = [export_resumes_as_pdf]

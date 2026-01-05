@@ -8,6 +8,8 @@ from django.http import HttpResponse, JsonResponse
 from django.db import transaction
 from django.template.loader import render_to_string
 
+from .template_renderer import SecureTemplateRenderer
+
 from .models import *
 from .forms import *
 from .ats_analyzer import ATSAnalyzer
@@ -16,7 +18,7 @@ from .pdf_generator import generate_resume_pdf
 
 # ============= Dashboard Views =============
 
-@login_required
+# @login_required
 def dashboard(request):
     """User dashboard showing all resumes"""
     resumes = Resume.objects.filter(user=request.user, is_active=True)
@@ -33,7 +35,7 @@ def dashboard(request):
 
 # ============= Multi-Step Resume Builder =============
 
-@login_required
+# @login_required
 def resume_builder_step1(request, pk=None):
     """Step 1: Basic Information"""
     if pk:
@@ -58,7 +60,7 @@ def resume_builder_step1(request, pk=None):
     return render(request, 'resumes/builder_step1.html', context)
 
 
-@login_required
+# @login_required
 @transaction.atomic
 def resume_builder_step2(request, pk):
     """Step 2: Work Experience (with formsets)"""
@@ -81,7 +83,7 @@ def resume_builder_step2(request, pk):
     return render(request, 'resumes/builder_step2.html', context)
 
 
-@login_required
+# @login_required
 @transaction.atomic
 def resume_builder_step3(request, pk):
     """Step 3: Education"""
@@ -104,7 +106,7 @@ def resume_builder_step3(request, pk):
     return render(request, 'resumes/builder_step3.html', context)
 
 
-@login_required
+# @login_required
 @transaction.atomic
 def resume_builder_step4(request, pk):
     """Step 4: Skills"""
@@ -136,7 +138,7 @@ def resume_builder_step4(request, pk):
     return render(request, 'resumes/builder_step4.html', context)
 
 
-@login_required
+# @login_required
 def resume_builder_step5(request, pk):
     """Step 5: Template Selection & Preview"""
     resume = get_object_or_404(Resume, pk=pk, user=request.user)
@@ -164,7 +166,7 @@ def resume_builder_step5(request, pk):
 
 # ============= Resume CRUD Views =============
 
-@login_required
+# @login_required
 def resume_preview(request, pk):
     """Preview resume with selected template"""
     resume = get_object_or_404(Resume, pk=pk, user=request.user)
@@ -184,7 +186,7 @@ def resume_preview(request, pk):
     return render(request, template_name, context)
 
 
-@login_required
+# @login_required
 def resume_delete(request, pk):
     """Delete resume (soft delete)"""
     resume = get_object_or_404(Resume, pk=pk, user=request.user)
@@ -198,7 +200,7 @@ def resume_delete(request, pk):
     return render(request, 'resumes/resume_confirm_delete.html', {'resume': resume})
 
 
-@login_required
+# @login_required
 def resume_duplicate(request, pk):
     """Duplicate an existing resume"""
     original = get_object_or_404(Resume, pk=pk, user=request.user)
@@ -231,7 +233,7 @@ def resume_duplicate(request, pk):
 
 # ============= ATS Analysis Views =============
 
-@login_required
+# @login_required
 def ats_analyze(request, pk):
     """ATS Analysis tool"""
     resume = get_object_or_404(Resume, pk=pk, user=request.user)
@@ -258,7 +260,7 @@ def ats_analyze(request, pk):
     return render(request, 'resumes/ats_analyze.html', context)
 
 
-@login_required
+# @login_required
 def ats_results(request, pk):
     """Display ATS analysis results"""
     analysis = get_object_or_404(ATSAnalysis, pk=pk, resume__user=request.user)
@@ -272,7 +274,7 @@ def ats_results(request, pk):
 
 # ============= PDF Export Views =============
 
-@login_required
+# @login_required
 def export_pdf(request, pk):
     """Export resume as PDF"""
     resume = get_object_or_404(Resume, pk=pk, user=request.user)
@@ -291,7 +293,7 @@ def export_pdf(request, pk):
 
 # ============= AJAX Views for Dynamic Forms =============
 
-@login_required
+# @login_required
 def ajax_change_template(request, pk):
     """AJAX view to change template and return preview HTML"""
     if request.method == 'POST':
@@ -322,7 +324,7 @@ def ajax_change_template(request, pk):
 # ============= Blog Views =============
 
 class BlogListView(ListView):
-    """List all published blog posts""" 
+    """List all published blog posts"""
     model = BlogPost
     template_name = 'blog/list.html'
     context_object_name = 'posts'
@@ -408,7 +410,7 @@ from django.db.models import Q, Avg
 from .models import CustomTemplate, TemplateRating
 from .forms import CustomTemplateUploadForm, TemplateRatingForm
 
-@login_required
+# @login_required
 def template_marketplace(request):
     """Browse and search custom templates"""
     
@@ -458,7 +460,7 @@ def template_marketplace(request):
     return render(request, 'resumes/template_marketplace.html', context)
 
 
-@login_required
+# @login_required
 def upload_custom_template(request):
     """Upload a new custom template"""
     
@@ -494,7 +496,7 @@ def upload_custom_template(request):
     return render(request, 'resumes/upload_template.html', context)
 
 
-@login_required
+# @login_required
 def my_templates(request):
     """View user's uploaded templates"""
     
@@ -509,7 +511,7 @@ def my_templates(request):
     return render(request, 'resumes/my_templates.html', context)
 
 
-@login_required
+# @login_required
 def template_detail(request, slug):
     """View template details"""
     
@@ -559,7 +561,7 @@ def template_detail(request, slug):
     return render(request, 'resumes/template_detail.html', context)
 
 
-@login_required
+# @login_required
 def use_custom_template(request, slug):
     """Use a custom template for a resume"""
     
@@ -587,7 +589,7 @@ def use_custom_template(request, slug):
     return redirect('resumes:dashboard')
 
 
-@login_required
+# @login_required
 def delete_custom_template(request, slug):
     """Delete a custom template"""
     
@@ -713,12 +715,11 @@ def get_template_guide():
     }
     
     
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from .stripe_service import StripeService
 
-@login_required
+# @login_required
 def subscription_plans(request):
     """Display subscription plans"""
     current_subscription = request.user.subscription
@@ -783,7 +784,7 @@ def subscription_plans(request):
         'current_subscription': current_subscription
     })
 
-@login_required
+# @login_required
 def create_checkout_session(request, plan):
     """Create Stripe checkout session"""
     try:
@@ -793,7 +794,7 @@ def create_checkout_session(request, plan):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-@login_required
+# @login_required
 def subscription_success(request):
     """Handle successful subscription"""
     session_id = request.GET.get('session_id')
@@ -811,7 +812,7 @@ def subscription_success(request):
     
     return redirect('dashboard')
 
-@login_required
+# @login_required
 def manage_subscription(request):
     """Redirect to Stripe customer portal"""
     try:
@@ -822,7 +823,7 @@ def manage_subscription(request):
         messages.error(request, str(e))
         return redirect('dashboard')
 
-@login_required
+# @login_required
 def cancel_subscription(request):
     """Cancel subscription"""
     if request.method == 'POST':
@@ -898,14 +899,38 @@ def can_create_resume(view_func):
 
 
 # Usage example:
-@login_required
+# @login_required
 @can_create_resume
 def resume_builder_step1(request):
     # Your view logic
     pass
 
-@login_required
+# @login_required
 @premium_required
 def ai_suggest_content(request):
     # AI feature only for premium users
     pass
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Create user profile
+            UserProfile.objects.create(user=user)
+            login(request, user)
+            messages.success(request, 'Account created successfully!')
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+
+@login_required
+def profile_edit(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        # Handle profile updates
+        pass
+    return render(request, 'profile/edit.html', {'profile': profile})
